@@ -43,11 +43,10 @@ func handleConnection(conn net.Conn) {
 
 	fmt.Println("New client connected")
 
-	// Создаем генератор случайных чисел
 	rand.Seed(time.Now().UnixNano())
 	// Генерируем случайное число от 0 до 99
 	value := rand.Intn(100)
-	fmt.Println(value)
+	// fmt.Println(value)
 
 	for {
 		// Читаем данные из соединения
@@ -59,22 +58,22 @@ func handleConnection(conn net.Conn) {
 		}
 
 		// Преобразовываем входящее сообщение в число
-		guess, err := strconv.Atoi(string(buffer[:numberByte]))
+		num, err := strconv.Atoi(string(buffer[:numberByte]))
 		if err != nil {
 			fmt.Println("Conversion error ", err)
 			continue
 		}
 
 		// Сравниваем угаданное число с загаданным
-		if guess == value {
-			conn.Write([]byte("Congratulations, you guessed it!"))
+		if num == value {
+			conn.Write([]byte("EQUAL. Congratulations, you guessed it!"))
 			conn.Close()
 			fmt.Println("Client disconnected")
 			break
-		} else if guess < value {
-			conn.Write([]byte("Your guess is too low. Try again:"))
+		} else if num < value {
+			conn.Write([]byte("MORE. Your guess is too low. Try again:"))
 		} else {
-			conn.Write([]byte("Your guess is too high. Try again:"))
+			conn.Write([]byte("LESS. Your guess is too high. Try again:"))
 		}
 	}
 }

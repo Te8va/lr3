@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"strconv"
 )
 
 const (
@@ -21,20 +22,21 @@ func main() {
 	// Бесконечный цикл, который просит пользователя угадать число
 	fmt.Print("Guess a number between 0 and 99: ")
 	for {
-		var guess int
-		_, err := fmt.Scanf("%d\n", &guess)
+		var guess string
+		_, err := fmt.Scanf("%s\n", &guess)
+		num, err := strconv.Atoi(guess)
 		if err != nil {
-			fmt.Println("Input error:", err)
+			fmt.Println("Input error1:", err)
 			continue
 		}
 
-		if guess <= 0 || guess >= 99 {
-			fmt.Println("Incorrect data.Try again.")
+		if num <= 0 || num >= 99 {
+			fmt.Println("Incorrect data.", err)
 			continue
 		}
 
 		// Отправляем угаданное число на сервер
-		_, err = conn.Write([]byte(fmt.Sprintf("%d", guess)))
+		_, err = conn.Write([]byte(fmt.Sprintf("%d", num)))
 		if err != nil {
 			fmt.Println("Error when sending data to the server", err)
 			continue
@@ -50,7 +52,7 @@ func main() {
 		fmt.Println(string(buffer[:numberByte]))
 
 		// Закрываем соединение, если число было угадано
-		if string(buffer[:numberByte]) == "Congratulations, you guessed it!" {
+		if string(buffer[:numberByte]) == "EQUAL. Congratulations, you guessed it!" {
 			conn.Close()
 			break
 		}
